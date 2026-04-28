@@ -33,7 +33,7 @@ protected:
     string cveID;
 
 public:
-    //Parameterized constructor in a agreed upon format.
+    //Parameterized constructor in an agreed upon format.
     Event(const string& id, const string& ts,
           const string& ip, const string& sev,
           const string& cve);
@@ -48,6 +48,9 @@ public:
     // ---- STATIC HELPER ------------------------------------------------------
     //static because we want to call it before any Event object exists.
     //It doesn't need to access any fields, just check the string.
+    //This allows cleaner coding format. Without this, we would need to 
+    //first create a dummy event just to check validateSeverity, then delete the dummmy
+    //event and then create new event object. Its silly.
     static bool validateSeverity(const string& s);
 
     // ---- SETTER -------------------------------------------------------------
