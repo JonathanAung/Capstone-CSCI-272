@@ -1,3 +1,11 @@
+// File       : Event.h
+// Author     : Tanzin Priyoh
+// Date       : 4/23/2026
+// Course     : CSCI 272 - Object Oriented Programming
+
+
+
+
 //added these 2 lines to stop file from showing up more then twice accidentally.
 #ifndef INTRUSIONEVENT_H
 #define INTRUSIONEVENT_H
