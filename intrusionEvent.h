@@ -25,8 +25,9 @@ class IntrusionEvent : public Event {
                     
                     
     //display will print events on the screen.
-    //asked claude about how to override a virtual function and it told me to use override.
+    //asked claude about how to replace a virtual function and it told me to use const override.
     void display() const override;
+    //this line converts an intrustion events data into a CSV format required by the file handler.
     string toCSV() const override;
     
     //getter functions creates a copy of the private data.
