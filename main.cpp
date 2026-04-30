@@ -1,6 +1,6 @@
 //main.cpp (shared file)
 //Course : CSCI 272
-// Based on the capstone project rules the main file cant contain anything with business longic.
+// Based on the capstone project rules the main file cant contain anything with business logic.
 //its just creating objects, calling menus, controller functions and handling high lvl flow.
 
 // any section marked with ============== will be where you put your code based on your designated task.
