@@ -19,7 +19,7 @@ class EventManager {
     // ---- ADD EVENT FUNCTION -------
     public:
     // Destructor to prevent memory leaks
-    EventManager::~EventManager() {
+    ~EventManager() {
         for (Event* e : events) {
             delete e;
         }
