@@ -64,11 +64,11 @@ bool Event::validateSeverity(const string& s) {
 }
 //our friend function is used here, no need for Event::
 //this allows overload the operator<<
-ostream& operator<<(ostream& os, const Event& e) {
-    // Left for test case. Short, single-line summary format for when we just want to print an Event without all the labels, might leave it for actual use.
-    os << "[" << e.eventID
-       << " | " << e.severity
-       << " | " << e.ipAddress
-       << " | " << e.cveID << "]";
-    return os;
-}
+// ostream& operator<<(ostream& os, const Event& e) {
+//     // Left for test case. Short, single-line summary format for when we just want to print an Event without all the labels, might leave it for actual use.
+//     os << "[" << e.eventID
+//        << " | " << e.severity
+//        << " | " << e.ipAddress
+//        << " | " << e.cveID << "]";
+//     return os;
+// }
