@@ -3,6 +3,8 @@
 // Date: 4/29/2026
 // Course: CSCI 272 - Object Oriented Programming
 
+#ifndef EVENTMANAGER_H
+#define EVENTMANAGER_H
 #include "Event.h"
 #include <vector>
 using namespace std;
@@ -13,20 +15,28 @@ class EventManager {
     vector<Event*> events; // The collection of event pointer inputs
     // Stores pointers to ensure that a destructor was there for EventManager
     // to delete pointers and memory leaks
-    
+
     // ---- ADD EVENT FUNCTION -------
     public:
     void addEvent(Event* newEvent) {
         events.push_back(newEvent);
     }
+
+    EventManager::~EventManager() {
+        for (Event* e : events) {
+            delete e;
+        }
+        events.clear();
+    }
     
+
     // ---- SEARCH FUNCTION --------
     // Ask Google to help understand the member functions step by step and structure
     // Use void to display events and delete object pointers
     // Search by IP Address
-    void searchByIp(string targetIP) {
+    void searchByIp(string targetIpAddress) {
         for (Event* e : events) {
-            if (e -> getIP() == targetIP) {
+            if (e -> getIpAddress() == targetIpAddress) {
                 e -> display();
             }
         }
@@ -67,4 +77,6 @@ class EventManager {
         displayAllEvents();
         cout << "--------------------" << endl;
     }
-}:
+};
+
+#endif
