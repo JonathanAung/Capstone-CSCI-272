@@ -56,8 +56,8 @@ string Event::toCSV() const {
 bool Event::validateSeverity(const string& s) {
     // Make a mutable copy so we can upper-case it.
     string up = s;
-    for (int i = 0; i < up.length(); ++i) {
-        up[i] = toupper(up[i]);
+        for (size_t i = 0; i < up.length(); ++i) {
+        up[i] = static_cast<char>(toupper(static_cast<unsigned char>(up[i])));
     }
     return up == "LOW"  || up == "MEDIUM"
         || up == "HIGH" || up == "CRITICAL";
