@@ -21,8 +21,7 @@ class EventManager {
     }
     
     // ---- SEARCH FUNCTION --------
-    // Ask google to help understand what is needed to be put step by step
-    // for members functuions such as addEvent(), displayAllEvents(), etc.
+    // Ask Google to help understand the member functions step by step
     // Use void to display events and delete object pointers
     // Search by IP Address
     void searchByIp(string targetIP) {
