@@ -125,6 +125,7 @@ cout << "Main Menu:\n" << "1. Add Event\n"
             //Ask user to enter event ID to delete like E002.
             // Calls eventManager.deleteEvennt(id)
             // this removes the matching event and frees memory.
+            cout << "\n Option 5: Delete Event\n";
             break;
         }
         
