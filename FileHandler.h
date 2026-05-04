@@ -1,9 +1,3 @@
-// File       : FileHandler.h
-// Author     : Ibrahim Jahangir
-// Date       : 4/28/2026
-// Course     : CSCI 272 - Object Oriented Programming
-// Role       : Member 5 - File handling and CSV parsing
-
 #ifndef FILEHANDLER_H
 #define FILEHANDLER_H
 
