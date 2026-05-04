@@ -18,10 +18,7 @@ class EventManager {
 
     // ---- ADD EVENT FUNCTION -------
     public:
-    void addEvent(Event* newEvent) {
-        events.push_back(newEvent);
-    }
-
+    // Destructor to prevent memory leaks
     EventManager::~EventManager() {
         for (Event* e : events) {
             delete e;
@@ -29,49 +26,61 @@ class EventManager {
         events.clear();
     }
     
+    // ---- ADD EVENT FUNCTION -------
+    void addEvent(Event* newEvent) {
+        events.push_back(newEvent);
+    }
 
     // ---- SEARCH FUNCTION --------
     // Ask Google to help understand the member functions step by step and structure
     // Use void to display events and delete object pointers
     // Search by IP Address
-    void searchByIp(string targetIpAddress) {
+    void searchByIp(const string targetIpAddress) const {
         for (Event* e : events) {
-            if (e -> getIpAddress() == targetIpAddress) {
-                e -> display();
+            if (e->getIpAddress() == targetIpAddress) {
+                e->display();
             }
         }
     }
     
     // ----- SEARCH BY SERVERITY LEVELS & CVEID ------
-    void searchBySeverity(string level) {
+    void searchBySeverity(const string& level) const {
         for (Event* e : events) {
-            if (e -> getSeverity() == level) {
-                e -> display(); // Shows the matching events
+            if (e->getSeverity() == level) {
+                e->display(); // Shows the matching events
             }
         }
     }
     
-    void searchByCveID(string targetCveID) {
+    void searchByCveID(const string& targetCveID) const {
         for (Event* e : events) {
-            if (e -> getCveID() == targetCveID) {
-                e -> display(); // 
+            if (e->getCveID() == targetCveID) {
+                e->display();
             }
         }
     }
     
+
+    // ------ HELPER FOR THE REPORT ------
+    void displayAllEvents() const {
+        for (const Event* e : events) {
+            e->display();
+        }
+    }
+
     // ---- REMOVES EVENTS -------
     // deletes events from the input by index or ID
     // index used to access events elements of the total event
     void deleteEvent(int index){
         if (index >= 0 && index < events.size()) {
-            delete event[index]; // Frees the memory if dynamically allocated
-            events.erase(events.begin() + index);
+            delete events[index]; // Frees the memory if dynamically allocated
+            events.erase(events.begin() + index); // removes from vector
         }
     }
-    
+
     // ---- GENERATE REPORTS --------
     // Generates and displays reports for every pointer
-    void generateReport() {
+    void generateReport() const {
         cout << "--- System Event Report ---" << endl;
         cout << "Events: " << events.size() << endl;
         displayAllEvents();
