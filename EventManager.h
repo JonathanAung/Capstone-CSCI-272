@@ -26,7 +26,7 @@ class EventManager {
     void deleteEvent(int index);
     
     // ---- Search Function ----
-    void searchByIp(const string& targetIpAdress) const;
+    void searchByIp(const string& targetIpAddress) const;
     void searchBySeverity(const string& level) const;
     void searchByCveID(const string& targetCveID) const;
     
