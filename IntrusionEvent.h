@@ -26,7 +26,7 @@ class IntrusionEvent : public Event {
   // Parameterized constructor, taking the 5 data points from Event and adding 2 more fields unique to this header.
   //const & are used for strings to avoid copying them.
   //used claude for help on weather i should add const & to the code and it said yes to avoid this file from modifying the original data. 
-    IntrusionEvent(const string& eventid, const string& timestamp,
+    IntrusionEvent(const string& eventID, const string& timestamp,
                     const string& ipAddress, const string& severity,
                     const string& cveID, const string& attackType,
                     int attemptCount);
