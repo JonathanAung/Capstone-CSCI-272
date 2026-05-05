@@ -13,6 +13,7 @@
 //#include "FileHandler.h" //Member 5 (Ibrahim Janangir)
 #include <iostream>
 #include <vector>
+#include <stdexcept> //for invalid arguement exception
 using namespace std;
 
 int main() {
@@ -63,8 +64,28 @@ cout << "Main Menu:\n" << "1. Add Event\n"
     << "Enter your option (1-7): ";
     
     
-    cin >> option;
-    cin.ignore(); //to clear the new line made from using cin.
+    
+        //replacing cin.ignore() with a try/catch source: https://codepractice.in/programming-language/cpp-programming/cpp-input-validation
+    try { //this runs the code and waits for errors to be created.
+            cin >> option;
+        if (cin.fail()) {
+                cin.clear();  //resets error flag
+                cin.ignore(1000, '\n'); //removes bad input
+                throw invalid_argument("Must enter a number between 1-7."); //exception object/message holder
+            }
+            cin.ignore(1000, '\n'); //if input is good clears new line.
+    }       
+    
+        catch (exception& e) { //if an error is made above it will be handled here instead of crashing the program.
+                //this also grabs the exception object.
+                cout << "Error: " << e.what() << "\n"; //.what() is a function of exception class(handles runtime errors) in <stdexcept>.
+                // will return the error message passed to throw 
+                option = 0; //resets the variable so its not holding whatever caused the error.
+                continue; // skips the code in the current iteration and jumps
+                //back to the top of the while loop.
+                //source https://codepractice.in/programming-language/cpp-programming/cpp-break-continue
+                //source https://faculty.cs.niu.edu/~mcmahon/CS241/Notes/exceptions.html    needed this to find out what .what() does.
+            }
 
     //using a switch for choice selector. better then if else due to not having to write 
     //the condition for each number the user types.
