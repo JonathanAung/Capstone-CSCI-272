@@ -28,7 +28,7 @@ class EventManager {
     // ---- Search Function ----
     void searchByIp(const string& targetIpAdress) const;
     void searchBySeverity(const string& level) const;
-    void SearchByCveID(const string& targetCveID) const;
+    void searchByCveID(const string& targetCveID) const;
     
     // --- Reports ---
     void displayAllEvents() const;
