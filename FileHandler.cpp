@@ -1,98 +1,150 @@
+// Author     : Ibrahim Jahangir
+// Date       : 5/5/2026
+// Course     : CSCI 272 - Object Oriented Programming
+// Role       : Member 5 - File handling, CSV parsing, sorting, searching, and exception handling
+
 #include "FileHandler.h"
 
-//this function loads all the events from the csv file.
-//each line gets sent to parseCSVLine so it can become an actual event object.
+//this function loads all events from the csv file.
+//i added try/catch here so the program does not crash if the file is missing.
 vector<Event*> FileHandler::loadEventsFromFile(string filename) {
     vector<Event*> events;
 
-    //i used ifstream because this part only needs to read from the file.
-    ifstream file(filename);
+    try {
+        ifstream file(filename);
 
-    if (!file.is_open()) {
-        cout << "Error: Could not open file " << filename << endl;
-        return events;
-    }
-
-    string line;
-
-    while (getline(file, line)) {
-        if (line.empty()) {
-            continue;
+        //if the file cannot open, i throw an error and handle it in catch.
+        if (!file.is_open()) {
+            throw runtime_error("File could not be opened: " + filename);
         }
 
-        Event* event = parseCSVLine(line);
+        string line;
 
-        if (event != nullptr) {
-            events.push_back(event);
+        while (getline(file, line)) {
+            if (line.empty()) {
+                continue;
+            }
+
+            Event* event = parseCSVLine(line);
+
+            if (event != nullptr) {
+                events.push_back(event);
+            }
         }
+
+        //badbit means something serious happened while reading the file.
+        if (file.bad()) {
+            throw runtime_error("Badbit error: serious file reading problem.");
+        }
+
+        //failbit can happen at the end of the file, so i check eof too.
+        if (file.fail() && !file.eof()) {
+            throw runtime_error("Failbit error: file reading failed before the end.");
+        }
+
+        file.close();
     }
 
-    file.close();
+    catch (const exception& e) {
+        cout << "FileHandler Error: " << e.what() << endl;
+        cout << "Starting with an empty event list instead." << endl;
+    }
+
     return events;
 }
 
-//this function saves all the events back into csv format.
-//each child class already has its own toCSV(), so this keeps the save part simple.
+//this function saves all events back into the csv file.
+//i added exception handling here so save errors are caught.
 void FileHandler::saveEventsToFile(string filename, const vector<Event*>& events) {
-    ofstream file(filename);
+    try {
+        ofstream file(filename);
 
-    if (!file.is_open()) {
-        cout << "Error: Could not save file " << filename << endl;
-        return;
+        if (!file.is_open()) {
+            throw runtime_error("File could not be saved: " + filename);
+        }
+
+        for (Event* event : events) {
+            if (event != nullptr) {
+                file << event->toCSV() << endl;
+
+                //checks for a serious writing error.
+                if (file.bad()) {
+                    throw runtime_error("Badbit error: serious file writing problem.");
+                }
+
+                //checks if writing failed.
+                if (file.fail()) {
+                    throw runtime_error("Failbit error: file writing failed.");
+                }
+            }
+        }
+
+        file.close();
+        cout << "Events saved to " << filename << endl;
     }
 
-    for (Event* event : events) {
-        if (event != nullptr) {
-            file << event->toCSV() << endl;
+    catch (const exception& e) {
+        cout << "Save Error: " << e.what() << endl;
+        cout << "The events were not saved correctly." << endl;
+    }
+}
+
+//this is the main parsing function for my role.
+//the first 6 fields are shared, but the last 2 change depending on event type.
+Event* FileHandler::parseCSVLine(string line) {
+    try {
+        vector<string> fields = splitCSVLine(line);
+
+        if (fields.size() != 8) {
+            throw runtime_error("Invalid CSV line because it does not have 8 fields: " + line);
+        }
+
+        string eventType = fields[0];
+
+        string eventID = fields[1];
+        string timestamp = fields[2];
+        string ipAddress = fields[3];
+        string severity = fields[4];
+        string cveID = fields[5];
+
+        if (eventType == "INTRUSION") {
+            string attackType = fields[6];
+
+            //attemptCount is supposed to be a number, so stoi can throw an error here.
+            int attemptCount = stoi(fields[7]);
+
+            return new IntrusionEvent(eventID, timestamp, ipAddress, severity, cveID, attackType, attemptCount);
+        }
+
+        else if (eventType == "MALWARE") {
+            string malwareType = fields[6];
+            string affectedFile = fields[7];
+
+            return new MalwareEvent(eventID, timestamp, ipAddress, severity, cveID, malwareType, affectedFile);
+        }
+
+        else {
+            throw runtime_error("Unknown event type: " + eventType);
         }
     }
 
-    file.close();
-    cout << "Events saved to " << filename << endl;
-}
-
-//this is the main parsing function for my part.
-//the first 6 fields are shared, but the last 2 change based on the event type.
-Event* FileHandler::parseCSVLine(string line) {
-    vector<string> fields = splitCSVLine(line);
-
-    if (fields.size() != 8) {
-        cout << "Invalid CSV line: " << line << endl;
+    catch (const invalid_argument& e) {
+        cout << "Parse Error: attemptCount was not a valid number." << endl;
         return nullptr;
     }
 
-    string eventType = fields[0];
-
-    //these fields are shared by both IntrusionEvent and MalwareEvent.
-    string eventID = fields[1];
-    string timestamp = fields[2];
-    string ipAddress = fields[3];
-    string severity = fields[4];
-    string cveID = fields[5];
-
-    if (eventType == "INTRUSION") {
-        string attackType = fields[6];
-
-        //attemptCount comes from the csv as text, so I convert it into an int.
-        int attemptCount = stoi(fields[7]);
-
-        return new IntrusionEvent(eventID, timestamp, ipAddress, severity, cveID, attackType, attemptCount);
+    catch (const out_of_range& e) {
+        cout << "Parse Error: attemptCount number was too large." << endl;
+        return nullptr;
     }
 
-    else if (eventType == "MALWARE") {
-        string malwareType = fields[6];
-
-        //affectedFile stays as a string because it is a file name.
-        string affectedFile = fields[7];
-
-        return new MalwareEvent(eventID, timestamp, ipAddress, severity, cveID, malwareType, affectedFile);
+    catch (const exception& e) {
+        cout << "Parse Error: " << e.what() << endl;
+        return nullptr;
     }
-
-    cout << "Unknown event type: " << eventType << endl;
-    return nullptr;
 }
 
-//this helper function separates the csv row by commas.
+//this helper function splits the csv row by commas.
 //i used stringstream because it makes the line easier to break apart.
 vector<string> FileHandler::splitCSVLine(string line) {
     vector<string> fields;
@@ -107,14 +159,13 @@ vector<string> FileHandler::splitCSVLine(string line) {
 }
 
 //this sorts the events by event ID.
-//binary search needs the list sorted first, so this function helps prepare it.
+//binary search needs the list to be sorted first.
 void FileHandler::bubbleSortByEventID(vector<Event*>& events) {
     int n = events.size();
 
     for (int i = 0; i < n - 1; i++) {
         for (int j = 0; j < n - i - 1; j++) {
 
-            //if the current event ID is bigger than the next one, I swap them.
             if (events[j]->getEventID() > events[j + 1]->getEventID()) {
                 Event* temp = events[j];
                 events[j] = events[j + 1];
@@ -141,34 +192,13 @@ Event* FileHandler::binarySearchByEventID(vector<Event*>& events, string targetI
         }
 
         else if (middleID < targetID) {
-
-            //target is bigger, so the left side can be ignored.
             left = middle + 1;
         }
 
         else {
-
-            //target is smaller, so the right side can be ignored.
             right = middle - 1;
         }
     }
 
     return nullptr;
 }
-
-// I used the project CSV Field Reference to understand how the csv rows are structured.
-// The project reference shows that fields 1-6 are shared by both event types,
-// and fields 7-8 change depending on whether the row is INTRUSION or MALWARE.
-//
-// I used cppreference for general C++ concepts like ifstream, stringstream, vector, and stoi.
-// ifstream helped with reading data from a file.
-// stringstream helped with splitting each csv row by commas.
-// vector helped with storing multiple Event pointers.
-// stoi helped with converting attemptCount from a string into an integer.
-//
-// I used Khan Academy to help explain the binary search logic.
-// Binary search works on a sorted list and keeps cutting the search area in half.
-// I also used ChatGPT as an AI writing and coding assistant.
-// Chat helped me organize  a
-// and explain the logic for parsing, bubble sort, and binary search in a way
-// that matches my understanding of the project
