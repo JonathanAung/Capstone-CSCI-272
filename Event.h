@@ -63,11 +63,6 @@ public:
     //void setIPAddress(const string& ip) { ipAddress = ip; }
     //void setTimestamp(const string& t) { timestamp = t; }
 
-    // ---- OPERATOR OVERLOAD -------------------------------
-    //used Claude to identify the necessity for this operator overload to be a friend function,
-    //since it needs access to the protected fields of Event.
-    friend ostream& operator<<(ostream& os, const Event& e);
-
     // ---- GETTERS ------------------------------------------------------------
     const string& getEventID()   const { return eventID; }
     const string& getTimestamp() const { return timestamp; }
@@ -79,5 +74,16 @@ public:
     //Rules of 3
     virtual ~Event() { }
 };
-
+// ---- OPERATOR OVERLOAD 
+    //used Claude to identify the necessity for this operator overload to be a friend function,
+    //since it needs access to the protected fields of Event.
+    //friend ostream& operator<<(ostream& os, const Event& e); ////Commented this out since friend function is not part of the required rubric but tempate <typename T> is. 
+template <typename T>
+T& operator<<(T& os, const Event& e) {
+    os << "[" << e.getEventID()
+       << " | " << e.getSeverity()
+       << " | " << e.getIpAddress()
+       << " | " << e.getCveID() << "]"; 
+    return os; 
+}
 #endif
